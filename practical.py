@@ -19,6 +19,7 @@ from urllib.parse import urljoin
 from PIL import Image
 import pytesseract
 from io import BytesIO
+from fpdf import FPDF
 
 # -------------------------------
 # ✅ Load Environment Variables
@@ -62,9 +63,9 @@ def extract_youtube_transcript(url):
 
         # ✅ Try manual transcript first
         try:
-            transcript = transcript_list.find_manually_created_transcript(["en"])
+            transcript = transcript_list.find_manually_created_transcript(["en","hi"])
         except:
-            transcript = transcript_list.find_generated_transcript(["en"])
+            transcript = transcript_list.find_generated_transcript(["en","hi"])
 
         fetched = transcript.fetch()
         transcript_text = " ".join([snippet.text for snippet in fetched])
@@ -177,6 +178,22 @@ def agent_pipeline(url):
 
     return summarize_with_groq(content)
 
+# -------------------------------
+# ✅ PDF Creation Function
+# -------------------------------
+def create_pdf(summary):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+    
+    # Split summary into lines and add to PDF
+    for line in summary.split('\n'):
+        pdf.cell(200, 10, txt=line, ln=True)
+    
+    # Return PDF as bytes for download
+    return pdf.output(dest='S').encode('latin-1')
+
+
 
 # -------------------------------
 # ✅ Streamlit UI
@@ -208,5 +225,14 @@ if st.button("📌 Get Detailed Notes"):
             if summary:
                 st.markdown("## ✅ Detailed Notes:")
                 st.write(summary)
+                # ✅ PDF Download Button
+                pdf_data = create_pdf(summary)
+                st.download_button(
+                    label="📄 Download Notes as PDF",
+                    data=pdf_data,
+                    file_name="notes.pdf",
+                    mime="application/pdf"
+                )
             else:
                 st.error("❌ Could not extract content from this URL.")
+                
