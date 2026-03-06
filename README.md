@@ -6,7 +6,7 @@
 
 ##  Features
 
--  Generate AI-powered notes from **YouTube videos**
+-  Generate AI-powered notes(hindi or english language) from **YouTube videos**
 -  Summarize **articles and documentation** URLs
 -  Extract **YouTube transcripts** automatically
 -  Perform **OCR** on images within articles
@@ -195,7 +195,6 @@ http://localhost:5000
 ##  Future Improvements
 
 -  Multi-language support
--  RAG-based document retrieval
 -  User authentication system
 -  Database storage for generated notes
 -  Cloud deployment (AWS / GCP / Azure)
